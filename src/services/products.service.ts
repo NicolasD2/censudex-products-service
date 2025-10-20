@@ -1,11 +1,11 @@
-import {Product} from '../models/products.model';
+import {ProductModel} from '../models/products.model';
 import { CloudinaryService } from './cloudinary.service';
 
 export class ProductsService {
     private cloudinary=new CloudinaryService();
 
     async create(data, fileBuffer: Buffer){
-        const existing = await Product.findOne({name: data.name});
+        const existing = await ProductModel.findOne({name: data.name});
         if(existing){
             throw new Error('El nombre del producto ya existe.');
         }
@@ -18,7 +18,7 @@ export class ProductsService {
             imagePublicId = result.public_id;
         }
 
-        const product = new Product({
+        const product = new ProductModel({
             ...data,
             imageUrl,
             imagePublicId,
@@ -28,22 +28,22 @@ export class ProductsService {
     }
     async findAll(filters={}){
         const query = { isActive: true, ...filters };
-        return Product.find(query);
+        return ProductModel.find(query);
     }
     async findById(id: string){
-        const product = await Product.findOne({id, isActive: true});
+        const product = await ProductModel.findOne({id, isActive: true});
         if(!product){
             throw new Error('Producto no encontrado.');
         }
         return product;
     }
     async update(id: string, data, fileBuffer?: Buffer){
-        const product = await Product.findOne({id});
+        const product = await ProductModel.findOne({id});
         if(!product){
             throw new Error('Producto no encontrado.');
         }
         if(data.name && data.name !== product.name){
-            const existing = await Product.findOne({name: data.name});
+            const existing = await ProductModel.findOne({name: data.name});
             if(existing){
                 throw new Error('El nombre del producto ya existe.');
             }
@@ -60,7 +60,7 @@ export class ProductsService {
         return product.save();
     }
     async softDelete(id: string){
-        const product = await Product.findOne({id});
+        const product = await ProductModel.findOne({id});
         if(!product){
             throw new Error('Producto no encontrado.');
         }
