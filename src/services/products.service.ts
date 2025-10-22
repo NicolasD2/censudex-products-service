@@ -1,8 +1,9 @@
 import { of } from 'rxjs';
 import {ProductModel} from '../models/products.model';
 import { CloudinaryService } from './cloudinary.service';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ProductsService {
     constructor(private readonly cloudinaryService: CloudinaryService) {}
 
@@ -17,7 +18,7 @@ export class ProductsService {
             let imagePublicId = null;
 
             if(fileBuffer){
-                const result: any = await this.cloudinaryService.uploadImage(fileBuffer, 'products');
+                const result: any = await this.cloudinaryService.uploadImageFromBuffer(fileBuffer, 'products');
                 imageUrl = result.secure_url;
                 imagePublicId = result.public_id;
             }
@@ -73,7 +74,7 @@ export class ProductsService {
                 if(product.imagePublicId){
                     await this.cloudinaryService.deleteImage(product.imagePublicId);
                 }
-                const result: any = await this.cloudinaryService.uploadImage(fileBuffer, 'products');
+                const result: any = await this.cloudinaryService.uploadImageFromBuffer(fileBuffer, 'products');
                 product.imageUrl = result.secure_url;
                 product.imagePublicId = result.public_id;
             }

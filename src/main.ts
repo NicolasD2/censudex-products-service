@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import connectDB from './utils/db';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { join } from 'path/win32';
 
 
 async function bootstrap() {
@@ -20,6 +22,21 @@ async function bootstrap() {
   });
 
   app.useGlobalPipes(new ValidationPipe({whitelist: true, transform: true, forbidNonWhitelisted: true}));
+
+  const grpcPort = process.env.GRPC_PORT || '50051';
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      package: 'products',
+      protoPath: join(process.cwd(), 'proto', 'products.proto'),
+      url: `localhost:${grpcPort}`,
+    },
+  });
+
+  await app.startAllMicroservices();
+  console.log(`gRPC Microservice is running on port ${grpcPort}`);
+
 
   const port = process.env.PORT || 3000;
   await app.listen(port);

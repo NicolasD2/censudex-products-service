@@ -1,22 +1,28 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 const connectDB = async (): Promise<void> => {
   try {
     const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/censudex-products';
     
-    await mongoose.connect(mongoURI)
+    const connection = await mongoose.connect(mongoURI, {
+      // Opciones adicionales para MongoDB
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
 
     console.log('MongoDB conectado exitosamente');
 
-    mongoose.connection.on('error', (error) => {
+    // Usar la conexión retornada en lugar de mongoose.connection
+    connection.connection.on('error', (error) => {
       console.error('Error de conexión a MongoDB:', error);
     });
 
-    mongoose.connection.on('disconnected', () => {
+    connection.connection.on('disconnected', () => {
       console.log('MongoDB desconectado');
     });
 
-    mongoose.connection.on('reconnected', () => {
+    connection.connection.on('reconnected', () => {
       console.log('MongoDB reconectado');
     });
 
@@ -25,6 +31,5 @@ const connectDB = async (): Promise<void> => {
     process.exit(1);
   }
 };
-
 
 export default connectDB;

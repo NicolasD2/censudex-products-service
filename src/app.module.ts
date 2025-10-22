@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { ProductsController } from './controllers/products.controller';
 import { ProductsService } from './services/products.service';
 import { CloudinaryService } from './services/cloudinary.service';
-
+import { ProductsGrpcController } from './controllers/gRPC.controller';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { CloudinaryService } from './services/cloudinary.service';
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/censudex-products'),
   ],
-  controllers: [ProductsController, AppController],
+  controllers: [ProductsController, AppController, ProductsGrpcController],
   providers: [AppService, ProductsService, CloudinaryService],
 })
 export class AppModule {}
