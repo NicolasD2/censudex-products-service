@@ -1,6 +1,8 @@
 import {v2 as cloudinary} from 'cloudinary';
 import streamifier from 'streamifier';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class CloudinaryService {
     constructor() {
         cloudinary.config({
@@ -10,10 +12,10 @@ export class CloudinaryService {
         });
     }
 
-    uploadImage(buffer: Buffer, folder: 'products'){
+    uploadImage(buffer: Buffer, folder: 'products'): Promise<any> {
         return new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
-                { folder },
+                { folder, resource_type: 'image', quality: 'auto', fetch_format: 'auto' },
                 (error, result) => {
                     if (result) {
                         resolve(result);
@@ -25,7 +27,7 @@ export class CloudinaryService {
             streamifier.createReadStream(buffer).pipe(stream);
         });
     }
-    deleteImage(publicId: string){
+    deleteImage(publicId: string): Promise<any> {
         return cloudinary.uploader.destroy(publicId);
     }
 }

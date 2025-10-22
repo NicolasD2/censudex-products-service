@@ -1,70 +1,100 @@
+import { of } from 'rxjs';
 import {ProductModel} from '../models/products.model';
 import { CloudinaryService } from './cloudinary.service';
+import { ConflictException } from '@nestjs/common';
 
 export class ProductsService {
-    private cloudinary=new CloudinaryService();
+    constructor(private readonly cloudinaryService: CloudinaryService) {}
 
-    async create(data, fileBuffer: Buffer){
-        const existing = await ProductModel.findOne({name: data.name});
-        if(existing){
-            throw new Error('El nombre del producto ya existe.');
-        }
-        let imageUrl = null;
-        let imagePublicId = null;
+    async create(data:any, fileBuffer?: Buffer){
 
-        if(fileBuffer){
-            const result: any = await this.cloudinary.uploadImage(fileBuffer, 'products');
-            imageUrl = result.secure_url;
-            imagePublicId = result.public_id;
-        }
-
-        const product = new ProductModel({
-            ...data,
-            imageUrl,
-            imagePublicId,
-            isActive: true,
-        });
-        return product.save();
-    }
-    async findAll(filters={}){
-        const query = { isActive: true, ...filters };
-        return ProductModel.find(query);
-    }
-    async findById(id: string){
-        const product = await ProductModel.findOne({id, isActive: true});
-        if(!product){
-            throw new Error('Producto no encontrado.');
-        }
-        return product;
-    }
-    async update(id: string, data, fileBuffer?: Buffer){
-        const product = await ProductModel.findOne({id});
-        if(!product){
-            throw new Error('Producto no encontrado.');
-        }
-        if(data.name && data.name !== product.name){
+        try{
             const existing = await ProductModel.findOne({name: data.name});
             if(existing){
                 throw new Error('El nombre del producto ya existe.');
             }
-        }
-        if(fileBuffer){
-            if(product.imagePublicId){
-                await this.cloudinary.deleteImage(product.imagePublicId);
+            let imageUrl = null;
+            let imagePublicId = null;
+
+            if(fileBuffer){
+                const result: any = await this.cloudinaryService.uploadImage(fileBuffer, 'products');
+                imageUrl = result.secure_url;
+                imagePublicId = result.public_id;
             }
-            const result: any = await this.cloudinary.uploadImage(fileBuffer, 'products');
-            product.imageUrl = result.secure_url;
-            product.imagePublicId = result.public_id;
+            const product = new ProductModel({
+                ...data,
+                imageUrl,
+                imagePublicId,
+                isActive: true,
+            });
+
+            return await product.save();
+        } catch (error) {
+            if(error instanceof ConflictException){
+                throw error;
+            }throw new Error('Error al crear el producto: ' + error.message);
         }
-        Object.assign(product, data);
-        return product.save();
     }
-    async softDelete(id: string){
-        const product = await ProductModel.findOne({id});
-        if(!product){
-            throw new Error('Producto no encontrado.');
+
+    async findAll(filters={}){
+        try{
+            const query = { isActive: true, ...filters };
+            return await ProductModel.find(query);
+        } catch (error) {
+            throw new Error('Error al obtener los productos: ' + error.message);
         }
-        product.isActive = false;
-        return product.save();
+    }
+
+    async findById(id: string){
+        try {
+            const product = await ProductModel.findOne({id, isActive: true});
+            if(!product){
+                throw new Error('Producto no encontrado.');
+            }
+            return product;
+        } catch (error) {
+            throw new Error('Error al obtener el producto: ' + error.message);
+        }
+    }
+    async update(id: string, data, fileBuffer?: Buffer){
+        try {
+            const product = await ProductModel.findOne({id});
+            if(!product){
+                throw new Error('Producto no encontrado.');
+            }
+            if(data.name && data.name !== product.name){
+                const existing = await ProductModel.findOne({name: data.name});
+                if(existing){
+                    throw new Error('El nombre del producto ya existe.');
+                }
+            }
+        
+            if(fileBuffer){
+                if(product.imagePublicId){
+                    await this.cloudinaryService.deleteImage(product.imagePublicId);
+                }
+                const result: any = await this.cloudinaryService.uploadImage(fileBuffer, 'products');
+                product.imageUrl = result.secure_url;
+                product.imagePublicId = result.public_id;
+            }
+            Object.assign(product, data);
+            return await product.save();
+    } catch (error) {
+            throw new Error('Error al actualizar el producto: ' + error.message);
+        }
+    }
+
+    async softDelete(id: string){
+        try {
+
+            const product = await ProductModel.findOne({id});
+            if(!product){
+                throw new Error('Producto no encontrado.');
+            }
+            product.isActive = false;
+            return await product.save();
+        } catch (error) {
+            throw new Error('Error al eliminar el producto: ' + error.message);
+        }
     }
 }
