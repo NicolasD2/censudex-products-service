@@ -52,7 +52,7 @@ export class ProductsController {
         }
     }
 
-    @Patch('delete/:id')
+    @Delete('delete/:id')
     async softDelete(@Req() req, @Param('id') id: string){
         try{
             //verifyJwtToken(req);
