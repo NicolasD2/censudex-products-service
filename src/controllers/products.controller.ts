@@ -1,8 +1,10 @@
-import {Controller,Get,Post,Patch,Delete,Body,Param,Req,UploadedFile,UseInterceptors, BadRequestException} from '@nestjs/common';
+import {Controller,Get,Post,Patch,Delete,Body,Param,Req,UploadedFile,UseInterceptors, BadRequestException, UseGuards} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductsService } from '../services/products.service';
-//import { verifyJwtToken } from "../utils/jwt.guard";
-//import { rolesGuard, rolesGuard } from "../utils/roles.guard";
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { AdminGuard } from 'src/guards/admin.guard';
+import { CreateProductDto } from 'src/dto/create-product.dto';
+import { UpdateProductDto } from 'src/dto/update-product.dto';
 
 
 @Controller('products')
@@ -29,11 +31,10 @@ export class ProductsController {
 
 
     @Post('create')
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @UseInterceptors(FileInterceptor('image'))
-    async create(@Req() req, @Body() body, @UploadedFile() file: Express.Multer.File){
+    async create(@Req() req, @Body() body: CreateProductDto, @UploadedFile() file: Express.Multer.File){
         try{
-            //verifyJwtToken(req);
-            //rolesGuard(req);
             return await this.productService.create(body, file?.buffer);
         } catch (error) {
             throw new BadRequestException(error.message);
@@ -41,11 +42,10 @@ export class ProductsController {
     }
 
     @Patch('edit/:id')
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @UseInterceptors(FileInterceptor('image'))
-    async update(@Req() req, @Param('id') id: string, @Body() body, @UploadedFile() file: Express.Multer.File){
+    async update(@Req() req, @Param('id') id: string, @Body() body: UpdateProductDto, @UploadedFile() file: Express.Multer.File){
         try{
-            //verifyJwtToken(req);
-            //rolesGuard(req);
             return await this.productService.update(id, body, file?.buffer);
         } catch (error) {
             throw new BadRequestException(error.message);
@@ -53,10 +53,9 @@ export class ProductsController {
     }
 
     @Delete('delete/:id')
+    @UseGuards(JwtAuthGuard, AdminGuard)
     async softDelete(@Req() req, @Param('id') id: string){
         try{
-            //verifyJwtToken(req);
-            //rolesGuard(req);
             return await this.productService.softDelete(id);
         } catch (error) {
             throw new BadRequestException(error.message);

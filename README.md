@@ -164,7 +164,6 @@ A continuación instrucciones prácticas para probar tanto la API REST como gRPC
     - key: `price` (Text/Number)
     - key: `category` (Text)
     - key: `description` (Text)
-    - key: `stock` (Text/Number)
     - key: `image` (File) ← selecciona archivo de imagen
 
   - Envía y revisa la respuesta; el servicio debe devolver el producto creado y la URL de Cloudinary si la subida fue exitosa.
@@ -202,7 +201,6 @@ Ejemplo message para `CreateProduct` (ajusta campos según `proto`):
   "price": 12.5,
   "category": "Prueba",
   "description": "Creado desde Postman gRPC",
-  "stock": 3
 }
 ```
 
