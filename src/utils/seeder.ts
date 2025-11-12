@@ -7,7 +7,7 @@ const sampleProducts = [
   {
     name: 'Auriculares Inalámbricos X1',
     description: 'Auriculares bluetooth con cancelación de ruido',
-    price: 59.99,
+    price: 5900.99,
     category: 'Electrónica',
     imageUrl: '',
     imagePublicId: '',
@@ -16,7 +16,7 @@ const sampleProducts = [
   {
     name: 'Cargador USB-C 65W',
     description: 'Cargador rápido para laptops y móviles',
-    price: 29.99,
+    price: 2900.99,
     category: 'Accesorios',
     imageUrl: '',
     imagePublicId: '',
@@ -25,7 +25,7 @@ const sampleProducts = [
   {
     name: 'Teclado Mecánico TKL',
     description: 'Teclado compacto con switches táctiles',
-    price: 89.99,
+    price: 89000.99,
     category: 'Periféricos',
     imageUrl: '',
     imagePublicId: '',
