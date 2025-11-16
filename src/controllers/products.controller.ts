@@ -1,8 +1,6 @@
 import {Controller,Get,Post,Patch,Delete,Body,Param,Req,UploadedFile,UseInterceptors, BadRequestException, UseGuards} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductsService } from '../services/products.service';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { AdminGuard } from 'src/guards/admin.guard';
 import { CreateProductDto } from 'src/dto/create-product.dto';
 import { UpdateProductDto } from 'src/dto/update-product.dto';
 
@@ -31,7 +29,6 @@ export class ProductsController {
 
 
     @Post('create')
-    @UseGuards(JwtAuthGuard, AdminGuard)
     @UseInterceptors(FileInterceptor('image'))
     async create(@Req() req, @Body() body: CreateProductDto, @UploadedFile() file: Express.Multer.File){
         try{
@@ -42,7 +39,6 @@ export class ProductsController {
     }
 
     @Patch('edit/:id')
-    @UseGuards(JwtAuthGuard, AdminGuard)
     @UseInterceptors(FileInterceptor('image'))
     async update(@Req() req, @Param('id') id: string, @Body() body: UpdateProductDto, @UploadedFile() file: Express.Multer.File){
         try{
@@ -53,7 +49,6 @@ export class ProductsController {
     }
 
     @Delete('delete/:id')
-    @UseGuards(JwtAuthGuard, AdminGuard)
     async softDelete(@Req() req, @Param('id') id: string){
         try{
             return await this.productService.softDelete(id);

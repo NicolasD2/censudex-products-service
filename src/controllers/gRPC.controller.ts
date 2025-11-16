@@ -1,7 +1,5 @@
 import {Controller, UseGuards} from '@nestjs/common';
 import {GrpcMethod} from '@nestjs/microservices';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { AdminGuard } from 'src/guards/admin.guard';
 import { off } from 'process';
 import { ProductsService } from 'src/services/products.service';
 
@@ -90,7 +88,6 @@ export class ProductsGrpcController {
   }
 
   @GrpcMethod('ProductsService', 'CreateProduct')
-  @UseGuards(JwtAuthGuard, AdminGuard)
   async createProduct(data: CreateProductRequest) {
     try {
       const product = await this.productsService.create(data);
@@ -110,7 +107,6 @@ export class ProductsGrpcController {
   }
 
   @GrpcMethod('ProductsService', 'UpdateProduct')
-  @UseGuards(JwtAuthGuard, AdminGuard)
   async updateProduct(data: UpdateProductRequest) {
     try {
       const { id, ...updateData } = data;
@@ -131,7 +127,6 @@ export class ProductsGrpcController {
   }
 
   @GrpcMethod('ProductsService', 'DeleteProduct')
-  @UseGuards(JwtAuthGuard, AdminGuard)
   async deleteProduct(data: DeleteProductRequest) {
     try {
       await this.productsService.softDelete(data.id);
