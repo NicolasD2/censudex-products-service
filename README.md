@@ -33,10 +33,7 @@
  ```env
  # Database
  MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/<db>?retryWrites=true&w=majority
- 
- # JWT
- JWT_SECRET=your-secret-key-here
- 
+  
  # Cloudinary
  CLOUDINARY_CLOUD_NAME=your_cloud_name
  CLOUDINARY_API_KEY=your_api_key
@@ -49,7 +46,7 @@
  # CORS
  CORS_ORIGIN=http://localhost:3000
  
- # gRPC (optional)
+ # gRPC
  GRPC_PORT=50051
  ```
  
@@ -100,6 +97,13 @@
  Ejemplo JSON para `CreateProduct` (ajusta según tu `.proto`):
  
  ```json
+{
+  "name": "Producto de prueba",
+  "price": 2900.99,
+  "category": "tecnologia",
+  "description": "Descripción del producto",
+  "imageUrl": "//res.cloudinary.com/dkkvcve9w/image/upload/v1763324257/products/zeqoavckfrwyx23arjyj.jpg"
+}
 
  ```
  
@@ -197,10 +201,11 @@ Ejemplo message para `CreateProduct` (ajusta campos según `proto`):
 
 ```json
 {
-  "name": "Producto gRPC",
-  "price": 12.5,
-  "category": "Prueba",
-  "description": "Creado desde Postman gRPC",
+  "name": "Producto de prueba",
+  "price": 29.99,
+  "category": "tecnologia",
+  "description": "Descripción del producto",
+  "imageUrl": "//res.cloudinary.com/dkkvcve9w/image/upload/v1763324257/products/zeqoavckfrwyx23arjyj.jpg"
 }
 ```
 
@@ -256,11 +261,15 @@ Consejos:
  Ejemplo body para crear producto (JSON):
  
  ```json
-
+ {
+  "name": "Producto de prueba",
+  "price": 29.99,
+  "category": "tecnologia",
+  "description": "Descripción del producto",
+  "imageUrl": "//res.cloudinary.com/dkkvcve9w/image/upload/v1763324257/products/zeqoavckfrwyx23arjyj.jpg"
+}
  ```
- 
- ## Notas finales
- 
+
  - Asegúrate de que las variables en `.env` son correctas.
  - No subas credenciales al repositorio.
  

@@ -11,7 +11,6 @@ export class ProductsController {
     @Get('get_all')
     async getAll(@Req() req){
         try{
-            //verifyJwtToken(req);
             return await this.productService.findAll();
         } catch (error) {
             throw new BadRequestException(error.message);

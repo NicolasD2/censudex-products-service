@@ -1,5 +1,6 @@
 import {Controller, UseGuards} from '@nestjs/common';
 import {GrpcMethod} from '@nestjs/microservices';
+import { create } from 'domain';
 import { off } from 'process';
 import { ProductsService } from 'src/services/products.service';
 
@@ -60,6 +61,8 @@ export class ProductsGrpcController {
           category: product.category,
           imageUrl: product.imageUrl || '',
           isActive: product.isActive,
+          createdAt: product.createdAt ? product.createdAt.toISOString() : '',
+          updatedAt: product.updatedAt ? product.updatedAt.toISOString() : '',
         })),
         total: products.length
       };
@@ -81,6 +84,8 @@ export class ProductsGrpcController {
         category: product.category,
         imageUrl: product.imageUrl || '',
         isActive: product.isActive,
+        createdAt: product.createdAt.toISOString(),
+        updatedAt: product.updatedAt.toISOString(),
       };
     } catch (error) {
       throw new Error(`gRPC Error: ${error.message}`);
@@ -100,6 +105,8 @@ export class ProductsGrpcController {
         category: product.category,
         imageUrl: product.imageUrl || '',
         isActive: product.isActive,
+        createdAt: product.createdAt ? product.createdAt.toISOString() : '',
+        updatedAt: product.updatedAt ? product.updatedAt.toISOString() : '',
       };
     } catch (error) {
       throw new Error(`gRPC Error: ${error.message}`);
@@ -119,7 +126,9 @@ export class ProductsGrpcController {
         price: product.price,
         category: product.category,
         imageUrl: product.imageUrl || '',
-        isActive: product.isActive
+        isActive: product.isActive,
+        createdAt: product.createdAt ? product.createdAt.toISOString() : '',
+        updatedAt: product.updatedAt ? product.updatedAt.toISOString() : '',
       };
     } catch (error) {
       throw new Error(`gRPC Error: ${error.message}`);
