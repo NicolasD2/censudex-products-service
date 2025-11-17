@@ -14,6 +14,10 @@
  - MongoDB Atlas (o instancia MongoDB accesible)
  - Cuenta de Cloudinary si quieres probar subida de imágenes
  - Postman (para probar gRPC) o grpcurl/evans
+
+ ## Patron de arquitectura
+ <img width="569" height="920" alt="Arquitectura drawio" src="https://github.com/user-attachments/assets/d8bba182-2729-4758-a2f7-92c5e3cb2aca" />
+
  
  ## Estructura principal
  
@@ -71,9 +75,55 @@
  - `npm run seed:dev` - Ejecutar el seeder (no borra)
  - `npm run seed:dev:drop` - Ejecutar el seeder y limpiar la colección antes
  - `npm run test` - Ejecutar tests
+
+
+Configuración de MongoDB (Atlas Cloud)
+Dado que tu variable de entorno MONGODB_URI utiliza el formato mongodb+srv://, el método más sencillo y recomendado es usar MongoDB Atlas, el servicio en la nube:
+
+1. Crear una Cuenta y un Cluster
+Regístrate: Ve al sitio web de MongoDB Atlas y crea una cuenta.
+
+Crea un Cluster: Sigue el asistente para crear un nuevo Cluster (base de datos en la nube).
+
+2. Configurar Acceso a la Red (Network Access)
+Es crucial que MongoDB Atlas permita la conexión desde tu máquina.
+
+En el panel de control de Atlas, ve a la sección "Network Access".
+
+Haz clic en "Add IP Address".
+
+Selecciona "Add Current IP Address" para permitir la conexión solo desde tu ubicación actual, o selecciona "Allow Access from Anywhere" (0.0.0.0/0) para pruebas temporales o si tu IP cambia constantemente (esto último es menos seguro).
+
+Haz clic en "Confirm".
+
+3. Configurar Acceso al Usuario de la Base de Datos
+Necesitas un usuario para autenticar la conexión.
+
+En el panel de control de Atlas, ve a la sección "Database Access".
+
+Haz clic en "Add New Database User".
+
+Crea un usuario y contraseña. Asegúrate de recordar esta contraseña, ya que se usará en tu cadena de conexión (MONGODB_URI).
+
+4. Obtener la Cadena de Conexión (MONGODB_URI)
+Esta es la URL que copiarás a tu archivo .env.
+
+En el panel de control, haz clic en el botón "Connect" de tu Cluster.
+
+Selecciona "Connect your application".
+
+Elige "Node.js" y la versión de Mongoose que estés usando (generalmente la última).
+
+Copia la cadena de conexión proporcionada.
+
+La cadena de conexión tendrá un formato similar a este:
+
+mongodb+srv://<user>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority
  
  ## Seeder (src/utils/seeder.ts)
- 
+  ```.env
+mongodb+srv://<user>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority
+ ```
  Ya incluido en `src/utils/seeder.ts`. Puedes ejecutarlo con:
  
  ```powershell
