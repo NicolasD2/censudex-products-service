@@ -21,7 +21,7 @@ interface CreateProductRequest {
     price: number;
     category: string;
     isActive: boolean;
-    image?: Buffer;
+    imageBuffer?: Buffer;
 }
 
 interface UpdateProductRequest {
@@ -31,7 +31,7 @@ interface UpdateProductRequest {
     price?: number;
     category?: string;
     isActive?: boolean;
-    image?: Buffer;
+    imageBuffer?: Buffer;
 }
 
 interface DeleteProductRequest {
@@ -95,14 +95,14 @@ export class ProductsGrpcController {
   @GrpcMethod('ProductsService', 'CreateProduct')
   async createProduct(data: CreateProductRequest) {
     try {
-      const product = await this.productsService.create(data);
+      const product = await this.productsService.create(data, data.imageBuffer as Buffer);
       
       return {
         id: product.id,
         name: product.name,
         description: product.description,
         price: product.price,
-        category: product.category,
+        category: data.category,
         imageUrl: product.imageUrl || '',
         isActive: product.isActive,
         createdAt: product.createdAt ? product.createdAt.toISOString() : '',
@@ -117,7 +117,12 @@ export class ProductsGrpcController {
   async updateProduct(data: UpdateProductRequest) {
     try {
       const { id, ...updateData } = data;
-      const product = await this.productsService.update(id, updateData);
+      
+      const product = await this.productsService.update(
+        id, 
+        updateData, 
+        data.imageBuffer as Buffer
+      );
       
       return {
         id: product.id,
